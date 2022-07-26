@@ -7,6 +7,23 @@ const dni = prompt('Ingresar su D.N.I')
 const edad = prompt('Ingresar su Edad')
 const calle = prompt('Ingresar Calle donde vive')
 
+// Se muestran en HTML los datos pedidos anteriormente.
+
+let mostrarNom = document.createElement("p")
+let mostrarDni = document.createElement("p")
+let mostrarEdad = document.createElement("p")
+let mostrarCalle = document.createElement("p")
+
+mostrarNom.innerHTML = "<h5>Nombre: </h5>" + nom 
+mostrarDni.innerHTML = "<h5>D.N.I.: </h5>" + dni 
+mostrarEdad.innerHTML = "<h5>Edad: </h5>" + edad 
+mostrarCalle.innerHTML = "<h5>Calle donde vive: </h5>" + calle 
+
+document.body.append(mostrarNom)
+document.body.append(mostrarDni)
+document.body.append(mostrarEdad)
+document.body.append(mostrarCalle)
+
 // Se crea una funcion con dichos datos tomados anteriormente.
 
 let usuario = []
@@ -40,7 +57,8 @@ let filtrar = prompt('Indicar menor precio a filtrar')
 const buscarProducto = productos.find((el) => el.desc === buscar)   
 const filtrarPrecio = productos.filter((el) => el.precio <= filtrar)
 
-// Se muestra lo buscado y filtrado por consola. Me gustaria que lo diga por alert pero no se como.
+// Se muestra lo buscado y filtrado por consola.
 
+alert('El producto buscado es: ' + buscarProducto.desc)
 console.log(buscarProducto)
 console.log(filtrarPrecio)
