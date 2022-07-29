@@ -1,64 +1,81 @@
-alert('¡Bienvenido! Complete sus datos para ser registrado.')
-
-// Se solicitan datos personales al usuario que va a cargar los datos.
-
-const nom = prompt('Ingresar su Nombre')
-const dni = prompt('Ingresar su D.N.I')
-const edad = prompt('Ingresar su Edad')
-const calle = prompt('Ingresar Calle donde vive')
-
-// Se muestran en HTML los datos pedidos anteriormente.
-
-let mostrarNom = document.createElement("p")
-let mostrarDni = document.createElement("p")
-let mostrarEdad = document.createElement("p")
-let mostrarCalle = document.createElement("p")
-
-mostrarNom.innerHTML = "<h5>Nombre: </h5>" + nom 
-mostrarDni.innerHTML = "<h5>D.N.I.: </h5>" + dni 
-mostrarEdad.innerHTML = "<h5>Edad: </h5>" + edad 
-mostrarCalle.innerHTML = "<h5>Calle donde vive: </h5>" + calle 
-
-document.body.append(mostrarNom)
-document.body.append(mostrarDni)
-document.body.append(mostrarEdad)
-document.body.append(mostrarCalle)
-
-// Se crea una funcion con dichos datos tomados anteriormente.
-
-let usuario = []
-function cargarUsuario(nom, dni, edad, calle){
-    usuario.push(nom, dni, edad, calle)
-    return usuario
-} 
-
-cargarUsuario(nom, dni, edad, calle)
-console.log(usuario)
-
-alert('Los productos disponibles son: Termica, Toma corriente, Llave, Bastidor, Embellecedor, Disyuntor Diferencial, Cable y Caja')
-
 // Se crea un objeto con diferentes productos
+const carrito = []
 
 const productos = [
-    {id: 0, desc: 'Termica', precio: 5000, cant: 10},
-    {id: 1, desc: 'Disyuntor Diferencial', precio: 7000, cant: 15},
-    {id: 2, desc: 'Cable', precio: 4000, cant: 100},
-    {id: 3, desc: 'Caja', precio: 500, cant: 20},
-    {id: 4, desc: 'Toma corriente', precio: 30, cant: 55},
-    {id: 5, desc: 'LLave', precio: 25, cant: 40},
-    {id: 6, desc: 'Bastidor', precio: 50, cant: 60},
-    {id: 7, desc: 'Embellecedor', precio: 25, cant: 60},
+    {
+        id: 1, 
+        title: 'Interruptor Termomagnético Siemens', 
+        price: 6000,
+        img: "../images/IT Siemens.jpg"
+    },
+    {
+        id: 2, 
+        title: 'Disyuntor Diferencial Siemens', 
+        price: 7500,
+        img: "../images/Diferencial Siemens.jpg"
+    },
+    {   
+        id: 3, 
+        title: 'Lampara LED Osram', 
+        price: 300,
+        img: "../images/Lampara 12W Osram.jpg"
+    },
+    {
+        id: 4, 
+        title: 'Toma corriente Schneider', 
+        price: 100,
+        img: "../images/Toma 20A Schneider.PNG"
+    },
+    {
+        id: 5, 
+        title: 'Llave punto simple', 
+        price: 100,
+        img: "../images/Llave tecla Schneider.jpg"
+    },
+    {
+        id: 6, 
+        title: 'Bastidor Schneider', 
+        price: 200,
+        img: "../images/Bastidor Schneider.jpg"
+    },
+    {
+        id: 7, 
+        title: 'Marco embellecedor Schneider', 
+        price: 150,
+        img: "../images/Marco embellecedor Schneider.jpg"
+    },
+    {
+        id: 8, 
+        title: 'Rollo cable Prysmian', 
+        price: 5000,
+        img: "../images/Cable flexible Prysmian 2,5.jpg"
+    },
 ]
 
-// Se pide al usuario que buscar y que precio filtrar.
+// Se usa una funcion donde "repase" cada producto del objeto anterior. Creando una card con imagenes, precios y titulos de cada producto.
 
-let buscar = prompt('Articulo a buscar')
-let filtrar = prompt('Indicar menor precio a filtrar')
-const buscarProducto = productos.find((el) => el.desc === buscar)   
-const filtrarPrecio = productos.filter((el) => el.precio <= filtrar)
+productos.forEach((producto) => {
+    const idButton = `add-cart${producto.id}`
+    document.getElementById('section-card').innerHTML += `<div class="card h-100">
+    <img src="${producto.img}">
+    <div class="card-body p-4">
+        <div class="text-center">
+            <h5 class="fw-bolder">${producto.title}</h5>
+            <p>$${producto.price}</p>
+        </div>
+    </div>
+    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+        <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="${idButton}" href="#">Añadir al carrito</a></div>
+    </div>
+    </div>`
+} )
 
-// Se muestra lo buscado y filtrado por consola.
+// Se usa una funcion para añadir al carrito 
 
-alert('El producto buscado es: ' + buscarProducto.desc)
-console.log(buscarProducto)
-console.log(filtrarPrecio)
+productos.forEach((producto) => {
+    const idButton = `add-cart${producto.id}`
+    document.getElementById(idButton).addEventListener('click', () => {
+        carrito.push(producto)
+        console.log(carrito)
+    }) 
+} )
