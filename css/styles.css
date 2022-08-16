@@ -11286,3 +11286,7 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+
+.modal-lg{
+  max-width: 750px;
+}

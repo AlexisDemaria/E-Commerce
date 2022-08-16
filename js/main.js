@@ -1,88 +1,44 @@
-// Se define el contenido del carrito en el Storage y que quede guardado
-// en el mismo cuando se actualice la pagina. Ademas, se muestra el precio a pagar en dicho carrito.
+// Se definen varias constantes que serán utilizadas y actualizadas a lo largo del programa.
 
-const carrito = JSON.parse(localStorage.getItem('carrito')) ?? []
-const total = carrito.reduce((sumaAnteriorProductos, producto) => sumaAnteriorProductos + producto.price, 0)
-document.getElementById('onCart').innerHTML = `${carrito.length}    -   $${total}`
+const contenedorProductos = document.getElementById('prodContenedor')
+const contenedorCarrito = document.getElementById('carroContenedor')
+const vaciarCarrito = document.getElementById('vaciarCarro')
+const contadorCarrito = document.getElementById('contadorCarrito')
+const cantidad = document.getElementById('cantidad')
+const cantidadTotal = document.getElementById('cantidadTotal')
+const precioTotal = document.getElementById('precioTotal')
+let carrito = []
 
+// Se carga y parsea el localStorage.
 
-// Se intenta crear una funcion para eliminar productos del carrito
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('carrito')){
+        carrito = JSON.parse(localStorage.getItem('carrito'))
+        actualizarCarrito()
+    }
+})
 
-// const eliminarProducto = (productoId) => {
-//     const item = carrito.find((producto) => producto.id === productoId)
-//     const n = carrito.indexOf(item)
-//     carrito.splice(n, 1)    
+// Función para vaciar el carrito y actualizar el mismo.
 
-// }
+vaciarCarrito.addEventListener('click', () => {
+    carrito.length = 0
+    actualizarCarrito()
+    localStorage.setItem('carrito', JSON.stringify(carrito))
+    Swal.fire({
+        title: '¡Listo!',
+        text: 'Su carro ha sido vaciado correctamente',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    })
+})
 
-carrito.forEach((producto) => {
-    document.getElementById("elementosDelCarrito").innerHTML += `<tr>
-    <th scope="row">${carrito.length}</th>
-    <td><img src="${producto.img}" style="width:100px"></td>
-    <td>${producto.title}</td>
-    <td>$${producto.price}</td>
-    <td><button onclick="eliminarProducto(${producto.id})" class="btn btn-danger">Eliminar</button></td>
-    </tr>`
-} )
-
-// Se crea un objeto con diferentes productos
-
-const stockProductos = [
-    {
-        id: 1, 
-        title: 'Interruptor Termomagnético Siemens', 
-        price: 6000,
-        img: "../images/IT Siemens.jpg"
-    },
-    {
-        id: 2, 
-        title: 'Disyuntor Diferencial Siemens', 
-        price: 7500,
-        img: "../images/Diferencial Siemens.jpg"
-    },
-    {   
-        id: 3, 
-        title: 'Lampara LED Osram', 
-        price: 300,
-        img: "../images/Lampara 12W Osram.jpg"
-    },
-    {
-        id: 4, 
-        title: 'Toma corriente Schneider', 
-        price: 100,
-        img: "../images/Toma 20A Schneider.PNG"
-    },
-    {
-        id: 5, 
-        title: 'Llave punto simple', 
-        price: 100,
-        img: "../images/Llave tecla Schneider.jpg"
-    },
-    {
-        id: 6, 
-        title: 'Bastidor Schneider', 
-        price: 200,
-        img: "../images/Bastidor Schneider.jpg"
-    },
-    {
-        id: 7, 
-        title: 'Marco embellecedor Schneider', 
-        price: 150,
-        img: "../images/Marco embellecedor Schneider.jpg"
-    },
-    {
-        id: 8, 
-        title: 'Rollo cable Prysmian', 
-        price: 5000,
-        img: "../images/Cable flexible Prysmian 2,5.jpg"
-    },
-]
-
-// Se usa una funcion donde "repase" cada producto del objeto anterior. Creando una card con imagenes, precios y titulos de cada producto.
+// Se recorre el stock de productos y se crean cards con los mismos.
 
 stockProductos.forEach((producto) => {
-    const idButton = `add-cart${producto.id}`
-    document.getElementById('section-card').innerHTML += `<div class="card h-100">
+    const div = document.createElement('div')
+    div.classList.add('producto')
+    div.innerHTML = `
+    <div class="card h-100">
     <img src="${producto.img}">
     <div class="card-body p-4">
     <div class="text-center">
@@ -91,18 +47,68 @@ stockProductos.forEach((producto) => {
     </div>
     </div>
     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-    <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="${idButton}" href="#">Añadir al carrito</a></div>
-    </div>
-    </div>`
-} )
+    <button id="agregar${producto.id}" class="btn btn-outline-dark mt-auto">Añadir al carrito<i class="fas fa-shopping-cart"></i></button>`
 
-// Se usa una funcion para añadir productos al carrito 
+    contenedorProductos.appendChild(div)
+    const button = document.getElementById(`agregar${producto.id}`)
+    button.addEventListener('click', () => {
+        agregarAlCarrito(producto.id)
+    })
+})
 
-stockProductos.forEach((producto) => {
-    const idButton = `add-cart${producto.id}`
-    document.getElementById(idButton).addEventListener('click', () => {
-        carrito.push(producto)
+// Función agregar al carrito, donde se aumentara la cantidad del producto seleccionado sin repetirlo. Si existe, se actualiza la cantidad,
+// si no esta, se agrega dicho producto. Trabajando con el id, ya que es único de cada producto. Por ultimo, se actualiza el carrito.
+
+const agregarAlCarrito = (prodId) => {
+    const existe = carrito.some (prod => prod.id === prodId) 
+    if (existe){ 
+        const prod = carrito.map (prod => {
+            if (prod.id === prodId){
+                prod.quantity++
+            }
+        })
+    } else { 
+        const item = stockProductos.find((prod) => prod.id === prodId)
+        carrito.push(item)
+    }
+    actualizarCarrito() 
+}
+
+// Función para eliminar un producto del carrito. Buscando el elemento por indice "n" y eliminando el mismos al seleccionarlo. 
+// Se actualiza el carrito
+
+const eliminarDelCarrito = (prodId) => {
+    const item = carrito.find((prod) => prod.id === prodId)
+    const n = carrito.indexOf(item)
+    carrito.splice(n, 1)
+    actualizarCarrito()
+    localStorage.setItem('carrito', JSON.stringify(carrito)) 
+}
+
+// Función que carga el carrito en el modal, mostrando el precio final.
+
+const actualizarCarrito = () => {
+    contenedorCarrito.innerHTML = "" 
+    carrito.forEach((prod) => {
+        const div = document.createElement('div')
+        div.className = ('productoEnCarrito')
+        div.innerHTML = `
+        <table class="table"><tbody>
+        <tr>
+        <th scope="row"><span id="cantidad">${prod.quantity}</span></th>
+        <td><img src="${prod.img}" style="width:100px"></td>
+        <td>${prod.title}</td>
+        <td><strong>$${prod.price}</strong></td>
+        <td><button onclick="eliminarDelCarrito(${prod.id})" class="btn btn-warning">Eliminar</button></td>
+        </tr>
+        </tbody>
+        </table>
+        `
+        
+        contenedorCarrito.appendChild(div)
         localStorage.setItem('carrito', JSON.stringify(carrito))
-        document.getElementById('onCart').innerHTML = `${carrito.length}`
-    }) 
-} )
+    })
+    contadorCarrito.innerText = carrito.length
+    console.log(carrito)
+    precioTotal.innerText = carrito.reduce((acc, prod) => acc + prod.quantity * prod.price, 0)
+}
