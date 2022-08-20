@@ -9,7 +9,7 @@ const cantidadTotal = document.getElementById('cantidadTotal')
 const precioTotal = document.getElementById('precioTotal')
 let carrito = []
 
-// Se carga y parsea el localStorage.
+// Se carga y "parsea" el localStorage.
 
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('carrito')){
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-// Función para vaciar el carrito y actualizar el mismo. Se agrega una libreria.
+// Función para vaciar el carrito y actualizar el mismo. Se agrega una librería.
 
 vaciarCarrito.addEventListener('click', () => {
     carrito.length = 0
@@ -32,32 +32,32 @@ vaciarCarrito.addEventListener('click', () => {
     })
 })
 
-// Función donde se utiliza fetch para "llamar o buscar" elementos de archivo stock.json, posteriormente se crean cards con las propiedades
+// Función donde se utiliza fetch para "llamar o buscar" de manera asíncrona, elementos de archivo stock.json, posteriormente se crean 
+// cards con las propiedades
 // obtenidas del archivo stock.json.
 
-const stockProductos = () => {
+const stockProductos = async () => {
+    const resp = await 
     fetch('../stock.json')
-    .then(resp => resp.json())
-    .then(data => {
-        data.forEach((producto) => {
-            const div = document.createElement('div')
-            div.innerHTML =`
-                <div class="card h-100">
-                <img src="${producto.img}">
-                <div class="card-body p-4">
-                <div class="text-center">
-                <h5 class="fw-bolder">${producto.title}</h5>
-                <p>$${producto.price}</p>
-                </div>
-                </div>
-                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                <button id="agregar${producto.id}" class="btn btn-outline-dark mt-auto">Añadir al carrito<i class="fas fa-shopping-cart"></i></button>`
-                contenedorProductos.appendChild(div)
-                const button = document.getElementById(`agregar${producto.id}`)
-                button.addEventListener('click', () => {
-                    agregarAlCarrito(producto.id)
-                })
-        })
+    const data = await resp.json()
+    data.forEach((producto) => {
+        const div = document.createElement('div')
+        div.innerHTML =`
+            <div class="card h-100">
+            <img src="${producto.img}">
+            <div class="card-body p-4">
+            <div class="text-center">
+            <h5 class="fw-bolder">${producto.title}</h5>
+            <p>$${producto.price}</p>
+            </div>
+            </div>
+            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+            <button id="agregar${producto.id}" class="btn btn-outline-dark mt-auto">Añadir al carrito<i class="fas fa-shopping-cart"></i></button>`
+            contenedorProductos.appendChild(div)
+            const button = document.getElementById(`agregar${producto.id}`)
+            button.addEventListener('click', () => {
+                agregarAlCarrito(producto.id)
+            })
     })
 }
 stockProductos()
