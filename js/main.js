@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-// Función para vaciar el carrito y actualizar el mismo.
+// Función para vaciar el carrito y actualizar el mismo. Se agrega una libreria.
 
 vaciarCarrito.addEventListener('click', () => {
     carrito.length = 0
@@ -32,46 +32,57 @@ vaciarCarrito.addEventListener('click', () => {
     })
 })
 
-// Se recorre el stock de productos y se crean cards con los mismos.
+// Función donde se utiliza fetch para "llamar o buscar" elementos de archivo stock.json, posteriormente se crean cards con las propiedades
+// obtenidas del archivo stock.json.
 
-stockProductos.forEach((producto) => {
-    const div = document.createElement('div')
-    div.classList.add('producto')
-    div.innerHTML = `
-    <div class="card h-100">
-    <img src="${producto.img}">
-    <div class="card-body p-4">
-    <div class="text-center">
-    <h5 class="fw-bolder">${producto.title}</h5>
-    <p>$${producto.price}</p>
-    </div>
-    </div>
-    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-    <button id="agregar${producto.id}" class="btn btn-outline-dark mt-auto">Añadir al carrito<i class="fas fa-shopping-cart"></i></button>`
-
-    contenedorProductos.appendChild(div)
-    const button = document.getElementById(`agregar${producto.id}`)
-    button.addEventListener('click', () => {
-        agregarAlCarrito(producto.id)
+const stockProductos = () => {
+    fetch('../stock.json')
+    .then(resp => resp.json())
+    .then(data => {
+        data.forEach((producto) => {
+            const div = document.createElement('div')
+            div.innerHTML =`
+                <div class="card h-100">
+                <img src="${producto.img}">
+                <div class="card-body p-4">
+                <div class="text-center">
+                <h5 class="fw-bolder">${producto.title}</h5>
+                <p>$${producto.price}</p>
+                </div>
+                </div>
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                <button id="agregar${producto.id}" class="btn btn-outline-dark mt-auto">Añadir al carrito<i class="fas fa-shopping-cart"></i></button>`
+                contenedorProductos.appendChild(div)
+                const button = document.getElementById(`agregar${producto.id}`)
+                button.addEventListener('click', () => {
+                    agregarAlCarrito(producto.id)
+                })
+        })
     })
-})
+}
+stockProductos()
 
-// Función agregar al carrito, donde se aumentara la cantidad del producto seleccionado sin repetirlo. Si existe, se actualiza la cantidad,
-// si no esta, se agrega dicho producto. Trabajando con el id, ya que es único de cada producto. Por ultimo, se actualiza el carrito.
+// Función agregar al carrito utilizando fetch con el mismo concepto que la función anterior (stockProductos), donde se aumentara la cantidad 
+// del producto seleccionado sin repetirlo. Si existe, se actualiza la cantidad, si no esta, se agrega dicho producto. 
+// Trabajando con el id, ya que es único de cada producto. Por ultimo, se actualiza el carrito.
 
 const agregarAlCarrito = (prodId) => {
-    const existe = carrito.some (prod => prod.id === prodId) 
-    if (existe){ 
-        const prod = carrito.map (prod => {
-            if (prod.id === prodId){
-                prod.quantity++
-            }
-        })
-    } else { 
-        const item = stockProductos.find((prod) => prod.id === prodId)
-        carrito.push(item)
-    }
-    actualizarCarrito() 
+    fetch('../stock.json')
+    .then(resp => resp.json())
+    .then(data => {
+        const existe = carrito.some (prod => prod.id === prodId) 
+        if (existe){ 
+            const prod = carrito.map (prod => {
+                if (prod.id === prodId){
+                    prod.quantity++
+                }
+            })
+        } else {
+            const item = data.find((prod) => prod.id === prodId)
+            carrito.push(item)
+        }
+        actualizarCarrito() 
+    })
 }
 
 // Función para eliminar un producto del carrito. Buscando el elemento por indice "n" y eliminando el mismos al seleccionarlo. 
