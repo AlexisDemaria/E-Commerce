@@ -36,10 +36,14 @@ vaciarCarrito.addEventListener('click', () => {
 // cards con las propiedades
 // obtenidas del archivo stock.json.
 
+const url = 'js/stock.json'
 const stockProductos = async () => {
     const resp = await 
-    fetch('../stock.json')
+    fetch(url)
     const data = await resp.json()
+    .catch((error) => {
+        console.error(error)
+    })
     data.forEach((producto) => {
         const div = document.createElement('div')
         div.innerHTML =`
@@ -67,7 +71,7 @@ stockProductos()
 // Trabajando con el id, ya que es único de cada producto. Por ultimo, se actualiza el carrito.
 
 const agregarAlCarrito = (prodId) => {
-    fetch('../stock.json')
+    fetch(url)
     .then(resp => resp.json())
     .then(data => {
         const existe = carrito.some (prod => prod.id === prodId) 
