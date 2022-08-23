@@ -11290,3 +11290,16 @@ textarea.form-control-lg {
 .modal-lg{
   max-width: 750px;
 }
+
+.cards{
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.img{
+  margin-top: 20px;
+  max-height: 100%;
+  width: 200px;
+}

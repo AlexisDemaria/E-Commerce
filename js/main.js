@@ -47,8 +47,8 @@ const stockProductos = async () => {
     data.forEach((producto) => {
         const div = document.createElement('div')
         div.innerHTML =`
-            <div class="card h-100">
-            <img src="${producto.img}">
+            <div class="card h-100 cards">
+            <img src="${producto.img}" class="img">
             <div class="card-body p-4">
             <div class="text-center">
             <h5 class="fw-bolder">${producto.title}</h5>
